@@ -83,7 +83,6 @@
                                         <!-- Add your dynamic filter form elements here -->
                                         <form id="save-filter-form" action="{{ route('filter.store') }}" method="post">
                                             @csrf
-
                                             @foreach($previewData[0] as $column)
                                                 @php
                                                     $isColumnArray = is_array($column);
@@ -93,10 +92,9 @@
                                                 <div class="row mb-2">
                                                     <div class="col-6">
                                                         <label>{{ $isColumnArray ? $column[0] : $column }}:</label>
-                                                        <input type="hidden" name="filter_name" value="{{ $snakeColumn }}">
                                                     </div>
                                                     <div class="col-6">
-                                                        <select name="filter_type" class="form-control">
+                                                        <select name="filters[{{ $snakeColumn }}]" class="form-control">
                                                             <option value="no_filter" selected>No Filter</option>
                                                             <option value="text">Text</option>
                                                             <option value="integer">Integer</option>
@@ -108,7 +106,7 @@
                                                 </div>
                                             @endforeach
 
-                                            <button type="submit" class="btn btn-primary mt-2" id="save-filter-btn">Save Filter</button>
+                                            <button type="submit" class="btn btn-primary mt-2" id="save-filter-btn">Save Filters</button>
                                         </form>
                                     </div>
                                 </div>
