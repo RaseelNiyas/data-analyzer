@@ -1,19 +1,21 @@
 <?php
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-
 use App\Http\Controllers\DataController;
-
 use App\Http\Controllers\FilterController;
-use App\Http\Controllers\FilteredDataController;
+use App\Models\Filter;
 
-Route::get('/filtered-data', [FilteredDataController::class, 'index'])->name('filtered_data.index');
-Route::get('/filtered-data/{type}', [FilteredDataController::class, 'filterByType'])->name('filtered_data.filterByType');
+Route::get('/filter/create', [FilterController::class, 'create'])->name('filter.create');
+// Route::match(['get', 'post'], '/filter/store', [FilterController::class, 'store'])->name('filter.store');
+Route::post('/filter/store', [FilterController::class, 'store'])->name('filter.store');
+// Route::post('/filter/store', 'FilterController@store')->name('filter.store');
+Route::post('/upload',function(){
+    Filter::created([
+        'filter_name' => request('filter_name'),
+        'filter_type'=> request('filter_type'),
+    ]);
 
-Route::get('/create-filter', [FilterController::class, 'create'])->name('filter.create');
-Route::post('/store-filter', [FilterController::class, 'store'])->name('filter.store');
-Route::get('/filtered-data', [FilteredDataController::class, 'index'])->name('filtered_data.index');
-
+});
 Route::middleware(['auth'])->group(function () {
     // Dashboard
     Route::get('/dashboard', [DataController::class, 'dashboard'])->name('dashboard');
