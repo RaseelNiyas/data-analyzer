@@ -17,22 +17,23 @@ class FilterController extends Controller
     {
         // Validate the request data
         $request->validate([
-            'filter_name' => 'required|string|max:255',
-            'filter_type' => 'required|string|max:255',
+            'filters' => 'required|array',
         ]);
 
-        // Create a new Filter instance
-        $filter = new Filter;
+        foreach ($request->filters as $columnName => $filterType) {
+            // Create a new Filter instance for each column
+            $filter = new Filter;
 
-        // Set values for each field from the form data
-        $filter->filter_name = $request->filter_name;
-        $filter->filter_type = $request->filter_type;
+            // Set values for each field from the form data
+            $filter->filter_name = $columnName;
+            $filter->filter_type = $filterType;
 
-        // Save the filter to the database
-        $filter->save();
+            // Save the filter to the database
+            $filter->save();
+        }
 
         // Redirect to the create page with a success message
-        return redirect()->route('filter.create')->with('success', 'Filter created successfully');
+        return redirect()->route('filter.create')->with('success', 'Filters created successfully');
     }
 
 
