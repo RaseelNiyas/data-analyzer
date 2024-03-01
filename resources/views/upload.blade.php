@@ -15,7 +15,6 @@
                             {{ session('success') }}
                         </div>
                     @endif
-
                     <form action="{{ route('upload.process') }}" method="post" enctype="multipart/form-data">
                         @csrf
 

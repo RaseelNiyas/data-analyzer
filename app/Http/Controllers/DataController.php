@@ -40,6 +40,7 @@ class DataController extends Controller
         return view('upload', compact('previewData'))->with('success', 'File uploaded successfully');
     }
 
+
     public function download()
     {
         $filePath = session('uploadedFilePath');
