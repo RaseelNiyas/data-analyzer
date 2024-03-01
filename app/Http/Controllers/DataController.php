@@ -39,7 +39,22 @@ class DataController extends Controller
 
         return view('upload', compact('previewData'))->with('success', 'File uploaded successfully');
     }
+     public function storeDynamicData(Request $request)
+    {
+        // Validate the request data
+        $request->validate([
+            'dynamic_data' => 'required|array',
+        ]);
 
+        // Save dynamic data
+        $dynamicData = $request->dynamic_data;
+
+        // Assuming 'data' is the model for the 'data' table
+        Data::create($dynamicData);
+
+        // Optionally, you can return a response or redirect
+        return response()->json(['message' => 'Dynamic Data saved successfully']);
+    }
 
     public function download()
     {
