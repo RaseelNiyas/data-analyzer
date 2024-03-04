@@ -7,9 +7,9 @@ use App\Models\Filter;
 
 
 
-Route::post('/store', [DataController::class, 'storeDynamicData']);
+Route::post('/store-dynamic-data', 'DataController@storeDynamicData')->name('data.storeDynamicData');
 
-Route::post('/save-to-database', [DataController::class, 'saveToDatabase'])->name('save.to.database');
+// Route::post('/save-to-database', [DataController::class, 'storeDynamicData'])->name('save.to.database');
 Route::post('/upload', [DataController::class, 'upload'])->name('upload.process');
 
 Route::get('/filter/create', [FilterController::class, 'create'])->name('filter.create');
