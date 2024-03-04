@@ -7,6 +7,8 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\DataImport;
 use App\Models\Data;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
+
 
 class DataController extends Controller
 {
@@ -39,7 +41,38 @@ class DataController extends Controller
 
         return view('upload', compact('previewData'))->with('success', 'File uploaded successfully');
     }
+    public function storeDynamicData(Request $request)
+{
+    try {
+        // Validate the request data
+        $request->validate([
+            'dynamic_data' => 'required|array',
+        ]);
 
+        // Save dynamic data
+        $dynamicData = $request->dynamic_data;
+
+        // Assuming 'Data' is the model for the 'excel_data' table
+        Data::create([
+            'SID' => $dynamicData['SID'],
+            'Name' => $dynamicData['Name'],
+            'Address' => $dynamicData['Address'],
+            'No' => $dynamicData['No'],
+            'DOB' => $dynamicData['DOB'],
+            'Status' => $dynamicData['Status'],
+            // Add other columns as needed
+        ]);
+
+        // Optionally, you can return a response or redirect
+        return response()->json(['message' => 'Dynamic Data saved successfully']);
+    } catch (\Exception $e) {
+        // Log the exception details
+        Log::error('Error in storeDynamicData: ' . $e->getMessage());
+
+        // Return an error response
+        return response()->json(['error' => 'Internal Server Error'], 500);
+    }
+}
 
     public function download()
     {
