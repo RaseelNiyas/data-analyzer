@@ -31,7 +31,7 @@
                     @isset($previewData)
                         <div class="excel-preview" style="height: 400px; overflow-y: auto;">
                             <h4>Preview of Excel File</h4>
-                            <table class="table">
+                            <table id="preview-table" class="table">
                                 <thead>
                                     <tr>
                                         @foreach($previewData[0] as $column)
@@ -63,7 +63,10 @@
                                     @endfor
                                 </tbody>
                             </table>
+                            {{-- <a href="#" class="btn btn-success mt-3" id="save-to-database-btn">Save to Database</a> --}}
+
                         </div>
+                        <a href="#" class="btn btn-success mt-3" id="save-to-database-btn">Save to Database</a>
 
                         <!-- Button to open the dynamic filter form -->
                         <button id="show-filter-form-btn" class="btn btn-primary mt-3" data-toggle="modal" data-target="#filterModal">Create Filter</button>
@@ -111,7 +114,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <a href="{{ route('download') }}" class="btn btn-success mt-3">Download Original File</a>
                     @endisset
                 </div>
@@ -123,24 +125,71 @@
 <script src="{{ asset('js/bootstrap.bundle.min.js') }}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        // Open the filter modal when the button is clicked
         const showFilterFormBtn = document.getElementById('show-filter-form-btn');
-    const filterForm = document.getElementById('filterModal');
+        const filterForm = document.getElementById('filterModal');
 
-    if (showFilterFormBtn) {
-        showFilterFormBtn.addEventListener('click', function () {
-            // Open the modal when the button is clicked
-            $(filterForm).modal('show');
-        });
-    }
-    const saveFilterBtn = document.getElementById('save-filter-btn');
+        if (showFilterFormBtn) {
+            showFilterFormBtn.addEventListener('click', function () {
+                // Open the modal when the button is clicked
+                $(filterForm).modal('show');
+            });
+        }
 
-    if (saveFilterBtn) {
-        saveFilterBtn.addEventListener('click', function () {
-            document.getElementById('save-filter-form').submit();
-        });
-    }
-});
-        </script>
+        // Submit the filter form when the save button is clicked
+        const saveFilterBtn = document.getElementById('save-filter-btn');
+
+        if (saveFilterBtn) {
+            saveFilterBtn.addEventListener('click', function () {
+                document.getElementById('save-filter-form').submit();
+            });
+        }
+
+        // Send the data to the server when the save to database button is clicked
+        const saveToDatabaseBtn = document.getElementById('save-to-database-btn');
+
+        if (saveToDatabaseBtn) {
+            saveToDatabaseBtn.addEventListener('click', function () {
+                // Collect data from the preview table
+                var tableRows = document.getElementById('preview-table').getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+                var data = [];
+
+                for (var i = 0; i < tableRows.length; i++) {
+                    var rowData = [];
+                    var tableCells = tableRows[i].getElementsByTagName('td');
+
+                    for (var j = 0; j < tableCells.length; j++) {
+                        rowData.push(tableCells[j].innerText.trim());
+                    }
+
+                    data.push(rowData);
+                }
+
+                // Send data to the server using AJAX
+                fetch("{{ route('data.storeDynamicData') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        dynamic_data: data
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    // Optionally, handle the server response
+                })
+                .catch(error => {
+                    console.error(error);
+                    // Optionally, handle errors
+                });
+            });
+        }
+    });
+</script>
+
 
 
 
